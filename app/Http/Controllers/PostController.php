@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -39,6 +40,8 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $data['image'] = Storage::disk('public')->put('/images', $data['image']);
+        $data['user_id'] = Auth::id();
+
         Post::create($data);
 
         return redirect()->route('posts.index');
@@ -48,11 +51,11 @@ class PostController extends Controller
      * Display the specified resource.
      *
      * @param \App\Models\Post $post
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function show(Post $post)
     {
-        //
+        return view('posts.show', ['post'=>$post]);
     }
 
     /**
